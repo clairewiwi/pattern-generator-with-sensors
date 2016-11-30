@@ -3,12 +3,13 @@
 int windSensorPin = A5,
     lightSensorPin = A0;
 
-WindSensor  ws = WindSensor(windSensorPin);
-LightSensor ls = LightSensor(lightSensorPin);
+int nbSensors = 2; 
+Sensor* sensorVec[] = {new WindSensor(windSensorPin), 
+                       new LightSensor(lightSensorPin)
+                       };
 
-
-int inByte = 0;         // incoming serial byte
-
+int inByte = 0;
+    
 void setup() {
   // start serial port at 9600 bps:
   Serial.begin(9600);
@@ -17,14 +18,12 @@ void setup() {
 }
 
 void loop() {
-  // if we get a valid byte, read analog ins:
   if (Serial.available() > 0) {
-    // get incoming byte:
     inByte = Serial.read();
     delay(10);
-    Serial.write(ws.read())
-    Serial.write(ls.read());
- 
+    for (int i=0;i<nbSensors;i++){
+      Serial.write(sensorVec[i]->read());
+    }
   }
 }
 
