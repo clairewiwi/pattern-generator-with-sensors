@@ -22,7 +22,7 @@ void loop() {
     // get incoming byte:
     inByte = Serial.read();
     delay(10);
-    Serial.write(ws.read())
+    Serial.write(ws.read());
     Serial.write(ls.read());
  
   }
