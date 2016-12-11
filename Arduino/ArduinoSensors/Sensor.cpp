@@ -41,11 +41,24 @@ int LightSensor::read(){
 }
 
 
-////////////////  STUPIDITY SENSOR EAXMPLE only (stupidity is so omnipresnet, its detection is impossible)!!!!!  /////////////////////
+////////////////  FLUXSENSOR EXAMPLE 
+fluxSensor::fluxSensor(int p) : Sensor(p){
+}
+int fluxSensor::read(){
+  return analogRead(pinID); // une vrai valeur ici fonction de analogRead(pinID) 
+}
+
+////////////////  MICAMP SENSOR EXAMPLE o  /////////////////////
+MicampSensor::MicampSensor(int p) : Sensor(p){
+}
+int MicampSensor::read(){
+  return analogRead(pinID); // une vrai valeur ici fonction de analogRead(pinID) 
+}
+
+////////////////  STUPIDITY SENSOR EXAMPLE only (stupidity is so omnipresnet, its detection is impossible)!!!!!  /////////////////////
 StupiditySensor::StupiditySensor(int p) : Sensor(p){
 }
 int StupiditySensor::read(){
   return analogRead(pinID); // une vrai valeur ici fonction de analogRead(pinID) 
 }
-
 

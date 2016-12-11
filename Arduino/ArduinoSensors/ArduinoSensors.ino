@@ -1,11 +1,15 @@
 #include "Sensor.h"
 
-int windSensorPin = A5,
-    lightSensorPin = A0;
-
-int nbSensors = 2; 
-Sensor* sensorVec[] = {new WindSensor(windSensorPin), 
+int windSensorPin = A1;
+    lightSensorPin = A3;
+    luxSensorPin = A5;
+    micampSensorPin= A0;
+    
+int nbSensors = 4; 
+Sensor* sensorVec[] = {new WindSensor(windSensorPin)
                        new LightSensor(lightSensorPin)
+                       new LuxSensor(luxSensorPin)
+                       new MicampSensor(micampSensorPin)
                        };
 
 int inByte = 0;
@@ -30,6 +34,7 @@ void loop() {
 void establishContact() {
   while (Serial.available() <= 0) {
     Serial.print('A');   // send a capital A
-    delay(300);
+  //  delay(300);
+   delay(500); //changed for luxSensor
   }
 }

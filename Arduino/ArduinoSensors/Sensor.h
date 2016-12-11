@@ -29,10 +29,16 @@ class LightSensor : public Sensor{
     virtual int read();
 };
 
-class StupiditySensor : public Sensor{
+class FluxSensor : public Sensor{
     
   public:
-    StupiditySensor(int pi);
+    FluxSensor(int pi);
+    virtual int read();
+};
+
+class MicampSensor : public Sensor{
+  public:
+   MicampSensor(int pi);
     virtual int read();
 };
 
