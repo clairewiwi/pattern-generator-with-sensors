@@ -1,14 +1,14 @@
 #include "Sensor.h"
 
-int windSensorPin = A1;
-    lightSensorPin = A3;
-    luxSensorPin = A5;
+int windSensorPin = A1,
+    lightSensorPin = A3,
+    luxSensorPin = A5,
     micampSensorPin= A0;
     
 int nbSensors = 4; 
-Sensor* sensorVec[] = {new WindSensor(windSensorPin)
-                       new LightSensor(lightSensorPin)
-                       new LuxSensor(luxSensorPin)
+Sensor* sensorVec[] = {new WindSensor(windSensorPin),
+                       new LightSensor(lightSensorPin),
+                       new LightSensor(luxSensorPin),
                        new MicampSensor(micampSensorPin)
                        };
 
