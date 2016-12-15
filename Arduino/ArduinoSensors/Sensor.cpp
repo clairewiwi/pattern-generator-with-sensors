@@ -52,7 +52,7 @@ int FluxSensor::read(){
 MicampSensor::MicampSensor(int p) : Sensor(p){
 }
 int MicampSensor::read(){
-  return analogRead(pinID); // une vrai valeur ici fonction de analogRead(pinID) 
+  return (255-(analogRead(pinID)/4)); // une vrai valeur ici fonction de analogRead(pinID) 
 }
 
 /*
