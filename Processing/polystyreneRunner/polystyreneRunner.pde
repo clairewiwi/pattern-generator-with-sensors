@@ -16,7 +16,7 @@ import processing.serial.*;
 
 final int kinttingWidth  = 80,  // number of needles,
           knittingHeight = 95,  // number of rows to knit
-          screenScale    = 10;  // mutliplier for display 
+          screenScale    = 5;  // mutliplier for display 
 
 final int startupDelay     = 5000,  // time in milliseconds to wait before using the serial input
           saveMessageDelay = 3000; // time to show save message
@@ -34,10 +34,13 @@ final String [] instructions = { "q: Quit",
                                  "s:  Save"
                                };
 
-final boolean useSerial = true;
+final boolean useSerial = false; //true;
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////// NO USER CONFIGURATION BEYOND THIS POINT  /////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+final int fontSize = round(24*screenScale/10.0);
+
 
 final color black = #000000,
             white = #FFFFFF,
@@ -216,7 +219,7 @@ String conformFrame(String frameFileName){
 void startupMessage(){
   // informs user that system is starting 
   // and gives instructions
-  final int tSize = 32;
+  final int tSize = round(fontSize*1.5);;
   pushStyle();
   background(green);
   fill(black);
@@ -236,7 +239,7 @@ void outputMessage(){
   background(black);
   fill(green);
   textAlign(CENTER,CENTER);
-  textSize(24);
+  textSize(fontSize);
   text(outputting + savedMsg,width/2.0,height/2.0);
   outputting = (millis()-outputTime < saveMessageDelay) ? outputting : "";
   popStyle();
