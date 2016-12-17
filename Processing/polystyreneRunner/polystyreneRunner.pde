@@ -1,14 +1,14 @@
- /**
- * KEYS
+/* KEYS
  * q/Q    : Quit
  * r/R    : reset nodes
  * s/S    : save png
+ * +      : increase blackness
+ * -      : decrease blackness
  
- WIRING arduino: 5.5v AND pin A0
+ * WIRING arduino: 5.5v AND pin A0
  */
 
 import processing.serial.*;
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// USER CONFIGURATION VARIABLES  //////////////////////////////////
@@ -16,22 +16,26 @@ import processing.serial.*;
 
 final int kinttingWidth  = 80,  // number of needles,
           knittingHeight = 95,  // number of rows to knit
-          screenScale    = 5;  // mutliplier for display 
+          screenScale    = 10;  // mutliplier for display 
 
-final int startupDelay     = 5000,  // time in milliseconds to wait before using the serial input
-          saveMessageDelay = 3000; // time to show save message
+final int startupDelay      = 5000, // time in milliseconds to wait before using the serial input
+          saveMessageDelay  = 3000, // time to show save message
+          blacknessMsgDelay = 1500; // time to show blackness Threshold Value (range is 0 to 1, steps of 0.01)
 
 final String outputDir               = "Output",
-             separator               = "/",
+             separator               = "/",           // this may need to be changed on Windows!
              tempFile                = "temp.png",
              outputFilePrefix        = "Knit_This",
              outputfileNameExtension = ".png",
              startupMsg              = "Starting up ...",
-             savedMsg                = "\nSaved!!";
+             savedMsg                = "\nSaved!!",
+             blacknessMsg            = "Blackness Value: ";
 
 final String [] instructions = { "q: Quit",
-                                 "r:  Reset",
-                                 "s:  Save"
+                                 "r: Reset",
+                                 "s: Save",
+                                 "+: Increase Blackness",
+                                 "-: Decrease Blackness"
                                };
 
 final boolean useSerial = false; //true;
@@ -39,8 +43,14 @@ final boolean useSerial = false; //true;
 ////////////////////// NO USER CONFIGURATION BEYOND THIS POINT  /////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-final int fontSize = round(24*screenScale/10.0);
+final int fontSize = max( 18,round(24*screenScale/10.0));
 
+float filterThreshold = 0.96;
+
+boolean blacknessChanged = true;
+int blacknessChangedTime = 0;
+
+PFont tFont;
 
 final color black = #000000,
             white = #FFFFFF,
@@ -66,6 +76,9 @@ void settings(){
 }
 
 void setup() {
+  println(round(24*screenScale/10.0));
+  tFont = loadFont("FreeMono-24.vlw");
+  textFont(tFont);
   strokeWeight(1);
   if(useSerial){
     // setup usb port 
@@ -86,6 +99,9 @@ void draw() {
   // if writing a saved imgage, inform user
   else if (outputting != ""){
     outputMessage();
+  }
+  else if (blacknessChanged){
+    blacknessMessage();
   }
   // otherwise run the movers
   else{
@@ -165,6 +181,13 @@ class Mover {
 
 void keyPressed() {
   switch(key){
+    // increase or decrfease blackness
+    case '+':
+    case '-':
+      filterThreshold = (key == '+') ? min(1.0,filterThreshold+0.01) : max(0,filterThreshold-0.01);
+      blacknessChanged = true;
+      blacknessChangedTime = millis();
+      break;
     // QUIT
     case 'q':
     case 'Q':
@@ -192,11 +215,13 @@ void keyPressed() {
 
 String conformFrame(String frameFileName){
   // take the saved frame tempfile
+  //pushStyle();
+  //colorMode(RGB, 100);
   PImage img = loadImage(frameFileName);
-  // make it black and white
-  img.filter(THRESHOLD);
   // resize it to the knitting parameters
   img.resize(kinttingWidth,0);
+  // make it black and white
+  img.filter(THRESHOLD,filterThreshold);
   // calculate time-stamp and output file name
   int y = year(),
       m = month(),
@@ -219,18 +244,20 @@ String conformFrame(String frameFileName){
 void startupMessage(){
   // informs user that system is starting 
   // and gives instructions
-  final int tSize = round(fontSize*1.5);;
+  //final int tSize = round(fontSize*1.5);;
   pushStyle();
-  background(green);
-  fill(black);
+  background(black);
+  fill(green);
   textAlign(CENTER,CENTER);
-  textSize(tSize);
+  textSize(fontSize); //tSize);
+  textFont(tFont);
   text(startupMsg,width/2.0,height/2.0);
   textAlign(LEFT);
   for (int i=0;i<instructions.length;i++){
-    text(instructions[i],width/2.0-textWidth(startupMsg)/2.0,height/2.0 +tSize*1.5*(i+2));
+    text(instructions[i],width/2.0-textWidth(startupMsg)/2.0,height/2.0 +fontSize*1.5*(i+2));
   }
   popStyle();
+  blacknessChangedTime = millis();
 }
 
 void outputMessage(){
@@ -239,12 +266,29 @@ void outputMessage(){
   background(black);
   fill(green);
   textAlign(CENTER,CENTER);
+  textFont(tFont);
   textSize(fontSize);
-  text(outputting + savedMsg,width/2.0,height/2.0);
+  String [] mVec = outputting.split(separator);
+  //text(outputting + savedMsg,width/2.0,height/2.0);
+  text(mVec[0] + separator + '\n' + mVec[1] + savedMsg,width/2.0,height/2.0);
+  
   outputting = (millis()-outputTime < saveMessageDelay) ? outputting : "";
   popStyle();
 }
 
+void blacknessMessage(){
+  // informs user of new blackness value
+  pushStyle();
+  background(black);
+  fill(green);
+  textAlign(CENTER,CENTER);
+  textFont(tFont);
+  textSize(fontSize);
+  text(blacknessMsg + nf(filterThreshold,1,2),width/2.0,height/2.0);
+  blacknessChanged = (millis()-blacknessChangedTime < blacknessMsgDelay);
+  popStyle();
+}
+  
 
 
 void serialEvent(Serial myPort) {
