@@ -34,12 +34,12 @@ final String outputDir               = "Output",
 final String [] instructions = { "q: Quit",
                                  "r: Reset",
                                  "s: Save",
-                                 "+: +Blackness",  // comment these 2 lines 
-                                 "-: -Blackness"   // to inhibit users from changing blackness
+                                 //"+: +Blackness",  // comment these 2 lines 
+                                 //"-: -Blackness"   // to inhibit users from changing blackness
                                };
 
 // This is the BLACKNESS VALUE
-float filterThreshold = 0.96;
+float filterThreshold = 0.75;
 
 final boolean useSerial = true;
 /////////////////////////////////////////////////////////////////////////////////////////////
