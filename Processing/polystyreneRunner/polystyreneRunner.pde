@@ -16,7 +16,7 @@ import processing.serial.*;
 
 final int kinttingWidth  = 80,  // number of needles,
           knittingHeight = 95,  // number of rows to knit
-          screenScale    = 10;  // mutliplier for display 
+          screenScale    = 5;  // mutliplier for display 
 
 final int startupDelay      = 5000, // time in milliseconds to wait before using the serial input
           saveMessageDelay  = 3000, // time to show save message
@@ -34,9 +34,12 @@ final String outputDir               = "Output",
 final String [] instructions = { "q: Quit",
                                  "r: Reset",
                                  "s: Save",
-                                 "+: Increase Blackness",
-                                 "-: Decrease Blackness"
+                                 "+: +Blackness",  // comment these 2 lines 
+                                 "-: -Blackness"   // to inhibit users from changing blackness
                                };
+
+// This is the BLACKNESS VALUE
+float filterThreshold = 0.96;
 
 final boolean useSerial = false; //true;
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,8 +47,6 @@ final boolean useSerial = false; //true;
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 final int fontSize = max( 18,round(24*screenScale/10.0));
-
-float filterThreshold = 0.96;
 
 boolean blacknessChanged = true;
 int blacknessChangedTime = 0;
@@ -184,9 +185,11 @@ void keyPressed() {
     // increase or decrfease blackness
     case '+':
     case '-':
-      filterThreshold = (key == '+') ? min(1.0,filterThreshold+0.01) : max(0,filterThreshold-0.01);
-      blacknessChanged = true;
-      blacknessChangedTime = millis();
+      if(instructions.length>3){
+        filterThreshold = (key == '+') ? min(1.0,filterThreshold+0.01) : max(0,filterThreshold-0.01);
+        blacknessChanged = true;
+        blacknessChangedTime = millis();
+      }
       break;
     // QUIT
     case 'q':
@@ -289,8 +292,6 @@ void blacknessMessage(){
   popStyle();
 }
   
-
-
 void serialEvent(Serial myPort) {
   // read a byte from the serial port:
   int inByte = myPort.read();
