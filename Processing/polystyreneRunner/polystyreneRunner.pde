@@ -118,6 +118,8 @@ class Mover {
   PVector velocity;
   PVector acceleration;
   float topSpeed, sz, d=0;
+  int startTime;
+  boolean init;
 
   Mover() {
     sz = 4; //taille des billes
@@ -125,12 +127,19 @@ class Mover {
     velocity = new PVector(0, 0);
     acceleration = new PVector(random(-0.01, 0.01), random(-0.02, 0.02));
     topSpeed = 3;
+    init = false;
   }
 
   void run() {
+    if (!init){
+      init = true;
+      startTime = millis();
+    }
+    if(millis()-startTime> startupDelay){
       update();
       checkEdges();
-      display();
+    }
+    display();
   }
 
   void update() {
