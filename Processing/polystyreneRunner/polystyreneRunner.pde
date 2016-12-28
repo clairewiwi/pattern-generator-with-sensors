@@ -131,11 +131,15 @@ class Mover {
   }
 
   void run() {
-    if (!init){
+    if (!useSerial){  // only for testing with no serial connection
+      serialInVal = mouseX;
+    }
+    // only init if real serial input values have been read, i.e. other than zero or 255 
+    if (!init && (serialInVal !=0 && serialInVal != 255)){ 
       init = true;
       startTime = millis();
     }
-    if(millis()-startTime> startupDelay){
+    if(init && (millis()-startTime> startupDelay)){
       update();
       checkEdges();
     }
